@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Industrial Training Logbook</title>
+    <!-- Importing a clean font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS Variables for Theming --- */
+        :root {
+            /* Light Mode (Default) */
+            --primary-color: #2563eb;       /* Royal Blue */
+            --primary-light: #eff6ff;       /* Very light blue for backgrounds */
+            --bg-color: #f8fafc;            /* Slate 50 */
+            --card-bg: #ffffff;
+            --text-main: #0f172a;           /* Slate 900 */
+            --text-secondary: #64748b;      /* Slate 500 */
+            --line-color: #cbd5e1;          /* Slate 300 */
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --toggle-bg: #e2e8f0;
+            --btn-text: #334155;
+            --bullet-color: #2563eb;
+        }
+
+        /* Dark Mode Override */
+        body.dark-mode {
+            --primary-color: #60a5fa;       /* Light Blue */
+            --primary-light: #1e293b;       /* Dark Slate */
+            --bg-color: #0f172a;            /* Slate 900 */
+            --card-bg: #1e293b;             /* Slate 800 */
+            --text-main: #f1f5f9;           /* Slate 100 */
+            --text-secondary: #94a3b8;      /* Slate 400 */
+            --line-color: #334155;          /* Slate 700 */
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --toggle-bg: #334155;
+            --btn-text: #f8fafc;
+            --bullet-color: #60a5fa;
+        }
+
+        /* --- Global Styles --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            line-height: 1.6;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            color: var(--primary-color);
+            font-weight: 800;
+            font-size: 2.5rem;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* --- Theme Toggle Button --- */
+        .theme-toggle-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .theme-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--line-color);
+            color: var(--btn-text);
+            padding: 8px 16px;
+            border-radius: 99px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .theme-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(0,0,0,0.15);
+        }
+
+        /* --- Timeline Container --- */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        /* The Vertical Line */
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 24px; /* Fixed position */
+            width: 2px;
+            background: var(--line-color);
+        }
+
+        /* --- Timeline Item --- */
+        .timeline-item {
+            position: relative;
+            margin-bottom: 50px;
+            padding-left: 70px; /* Space for the line and dots */
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        /* The Dot */
+        .timeline-dot {
+            position: absolute;
+            left: 25px; /* Center on line (24px + 1px) */
+            top: 28px;
+            width: 14px;
+            height: 14px;
+            background-color: var(--bg-color);
+            border: 3px solid var(--primary-color);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 0 0 4px var(--bg-color); /* Creates a gap effect */
+        }
+
+        /* --- Content Card --- */
+        .timeline-content {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            position: relative;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--line-color);
+        }
+
+        /* The Arrow */
+        .timeline-content::before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: -8px;
+            width: 14px;
+            height: 14px;
+            background-color: var(--card-bg);
+            border-left: 1px solid var(--line-color);
+            border-bottom: 1px solid var(--line-color);
+            transform: rotate(45deg);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Typography within Card */
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 1px solid var(--line-color);
+            padding-bottom: 15px;
+        }
+
+        .week-badge {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .date-range {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        ul {
+            margin: 0;
+            padding-left: 20px;
+            color: var(--text-main);
+        }
+
+        li {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            position: relative;
+            padding-left: 5px;
+        }
+        
+        li::marker {
+            color: var(--bullet-color);
+        }
+
+        li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .timeline-item {
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0; /* Start hidden for animation */
+        }
+
+        /* Stagger animation */
+        .timeline-item:nth-child(1) { animation-delay: 0.1s; }
+        .timeline-item:nth-child(2) { animation-delay: 0.2s; }
+        .timeline-item:nth-child(3) { animation-delay: 0.3s; }
+        .timeline-item:nth-child(4) { animation-delay: 0.4s; }
+        .timeline-item:nth-child(5) { animation-delay: 0.5s; }
+        .timeline-item:nth-child(6) { animation-delay: 0.6s; }
+        .timeline-item:nth-child(7) { animation-delay: 0.7s; }
+        .timeline-item:nth-child(8) { animation-delay: 0.8s; }
+        .timeline-item:nth-child(9) { animation-delay: 0.9s; }
+        .timeline-item:nth-child(10) { animation-delay: 1.0s; }
+        .timeline-item:nth-child(11) { animation-delay: 1.1s; }
+        .timeline-item:nth-child(12) { animation-delay: 1.2s; }
+
+        /* --- Responsive Design --- */
+        @media screen and (max-width: 600px) {
+            body {
+                padding: 20px 15px;
+            }
+            header {
+                margin-bottom: 40px;
+                text-align: left;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .timeline::before {
+                left: 14px;
+            }
+            .timeline-dot {
+                left: 15px;
+            }
+            .timeline-item {
+                padding-left: 45px;
+                margin-bottom: 35px;
+            }
+            .theme-toggle-container {
+                top: 15px;
+                right: 15px;
+            }
+            .date-range {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dark/Light Mode Toggle -->
+    <div class="theme-toggle-container">
+        <button class="theme-btn" id="themeToggle">
+            <span id="icon">☀️</span> <span id="modeText">Light Mode</span>
+        </button>
+    </div>
+
+    <header>
+        <h1>Industrial Training Logbook</h1>
+        <div class="subtitle">AmCreation Technologies Bhd Sdn</div>
+        <div class="subtitle" style="font-size: 0.9rem; margin-top: 5px;">Student: CST2209301</div>
+    </header>
+
+    <div class="timeline">
+
+        <!-- Week 1 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-header">
+                    <span class="week-badge">Week 1</span>
+                    <span class="date-range">17/9/2025 - 19/9/2025</span>
+                </div>
+                <h3>Onboarding & UI Basics</h3>
+                <ul>
+                    <li>Discussed internship responsibilities and objectives with the supervisor.</li>
+                    <li>Began learning Flutter and the Dart programming language.</li>
+                    <li>Developed a demo app using Flutter.</li>
+                    <li>Refined the UI of the demo app.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Week 2 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-header">
+                    <span class="week-badge">Week 2</span>
+                    <span class="date-range">22/9/2025 - 26/9/2025</span>
+                </div>
+                <h3>Planning & Design</h3>
+                <ul>
+                    <li>Worked on program Flow project planning and provided suggestions.</li>
+                    <li>Proposed AI integration ideas for the application.</li>
+                    <li>Designed the rough app UI using Figma.</li>
+                    <li>Presented the UI design to the supervisor and refined it based on feedback.</li>
+                    <li>Began implementing the UI using Flutter.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Week 3 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-header">
+                    <span class="week-badge">Week 3</span>
+                    <span class="date-range">29/9/2025 - 3/10/2025</span>
+                </div>
+                <h3>BLE & Health Features</h3>
+                <ul>
+                    <li>Presented App progress to the supervisor and improved overall UI design.</li>
+                    <li>Implemented BLE functionality in the app.</li>
+                    <li>Implemented device control features such as notifications and vibration.</li>
+                    <li>Integrated basic health data retrieval (e.g., sleep data).</li>
+                    <li>Studied implementation of health data for AI for the product.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Week 4 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-header">
+                    <span class="week-badge">Week 4</span>
+                    <span class="date-range">6/10/2025 - 10/10/2025</span>
+                </div>
+                <h3>Chip Integration & Operations</h3>
+                <ul>
+                    <li>Tested required tools for the new Renesas DA14535 chip.</li>
+                    <li>Tested BLE features in the app using the BLE development kit.</li>
+                    <li>Studied and applied methods for creating custom UUIDs in BLE using Keil.</li>
+                    <li>Studied and applied read/write operations between the BLE chip and Flutter app.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Week 5 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-header">
+                    <span class="week-badge">Week 5</span>
+                    <span class="date-range">13/10/2025 - 17/10/2025</span>
+                </div>
+                <h3>Protocols & Testing</h3>
+                <ul>
+                    <li>Discussed development direction and continued implementing BLE read/write functionalities.</li>
+                    <li>Tested BLE read/write operations using the LED indicator on the development chip.</li>
+                    <li>Researched BLE advertising protocol and advertising data.</li>
+                    <li>Implemented BLE advertising during an active connection.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Week 6 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-header">
+                    <span class="week-badge">Week 6</span>
+                    <span class="date-range">21/10/2025 - 24/10/2025</span>
+                </div>
+                <h3>Connection Logic</h3>
+                <ul>
+                    <li>Successfully booted the chip using SmartSnippets Toolbox.</li>
+                    <li>Implemented continuous BLE advertising during active connection.</li>
+                    <li>Designed and approach for BLE connection overtaking by a second device.</li>
+                    <li>Implemented and tested BLE connection overtake functionality.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Week 7 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-header">
+                    <span class="week-badge">Week 7</span>
+                    <span class="date-range">27/10/2025 - 31/10/2025</span>
+                </div>
+                <h3>Security & Architecture</h3>
+                <ul>
+                    <li>Debugged delay issues during BLE connection overtaking.</li>
+                    <li>Designed and implemented a trusted device system to enhance BLE security.</li>
+                    <li>Researched and tested different secure pairing approaches.</li>
+                    <li>Studied BLoC architecture for Flutter app migration.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Week 8 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-header">
+                    <span class="week-badge">Week 8</span>
+                    <span class="date-range">3/11/2025 - 7/11/2025</span>
+                </div>
+                <h3>Migration & Optimization</h3>
+                <ul>
+                    <li>Modified and tested BLE advertising data packet format according to requirements.</li>
+                    <li>Designed and finalised presentation slides for upcoming product team meeting.</li>
+                    <li>Drafted pseudocode for planned BLE Firmware enhancements.</li>
+                    <li>Started migrating app state management to BLoC architecture.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Week 9 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-header">
+                    <span class="week-badge">Week 9</span>
+                    <span class="date-range">10/11/2025 - 14/11/2025</span>
+                </div>
+                <h3>BLoC Implementation</h3>
+                <ul>
+                    <li>Implementation of BLoC State Management.</li>
+                    <li>Migrated core business logic to BLoC pattern.</li>
+                    <li>Refactored existing providers to use BLoC events and states.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Week 10 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-header">
+                    <span class="week-badge">Week 10</span>
+                    <span class="date-range">17/11/2025 - 21/11/2025</span>
+                </div>
+                <h3>Treatment UI & Fixes</h3>
+                <ul>
+                    <li>Designed and implemented UI/UX for Treatment sessions.</li>
+                    <li>Fixed issues within State Management screens.</li>
+                    <li>Ensured smooth state transitions between treatment phases.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Week 11 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-header">
+                    <span class="week-badge">Week 11</span>
+                    <span class="date-range">24/11/2025 - 28/11/2025</span>
+                </div>
+                <h3>Configuration Screens</h3>
+                <ul>
+                    <li>Developed Pre-treatment configuration screens.</li>
+                    <li>Implemented Duration selection screen.</li>
+                    <li>Implemented Frequency & Electric Potential selection screens.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Week 12 -->
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-header">
+                    <span class="week-badge">Week 12</span>
+                    <span class="date-range">1/12/2025 - 5/12/2025</span>
+                </div>
+                <h3>Final UI Enhancements</h3>
+                <ul>
+                    <li>Finalized D Mode UI implementation.</li>
+                    <li>Designed and implemented Summary Page UI.</li>
+                    <li>Applied general UI enhancements and polish across the application.</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const toggleBtn = document.getElementById('themeToggle');
+        const icon = document.getElementById('icon');
+        const modeText = document.getElementById('modeText');
+        const body = document.body;
+
+        // Check for saved user preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            updateButton(true);
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const isDark = body.classList.contains('dark-mode');
+            
+            // Save preference
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateButton(isDark);
+        });
+
+        function updateButton(isDark) {
+            if (isDark) {
+                icon.textContent = '🌙';
+                modeText.textContent = 'Dark Mode';
+            } else {
+                icon.textContent = '☀️';
+                modeText.textContent = 'Light Mode';
+            }
+        }
+    </script>
+</body>
+</html>
